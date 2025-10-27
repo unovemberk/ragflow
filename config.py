@@ -14,7 +14,7 @@ MYSQL_CONFIG = {
 SERVICE_CONFIG = {
     "ragflow": {
         "base_url": "http://192.168.29.130:8000",
-        "knowledge_base_id": "d734b0e8af1d11f0bcb2cef0f93a59bc"  # Ragflow知识库ID
+        "knowledge_base_id": "22aa3e56b2d611f09af1e666fc2e801e"  # Ragflow知识库ID
     },
     "ollama": {
         "base_url": "http://192.168.35.22:11434",

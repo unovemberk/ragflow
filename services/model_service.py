@@ -6,23 +6,24 @@ OLLAMA_MODEL = SERVICE_CONFIG["ollama"]["default_model"]
 
 
 async def call_ollama(prompt: str) -> str:
-    """调用Ollama生成回答"""
+    """调用Ollama的聊天接口（适配qwen:7b-chat等聊天模型）"""
     try:
         async with httpx.AsyncClient() as client:
             response = await client.post(
-                f"{OLLAMA_URL}/api/generate",
+                f"{OLLAMA_URL}/api/chat",  # 改用聊天接口
                 json={
-                    "model": "qwen:7b-chat",
-                    "prompt": prompt,
-                    "stream": True
+                    "model": OLLAMA_MODEL,  # 即"qwen:7b-chat"
+                    "messages": [{"role": "user", "content": prompt}],  # 聊天模型要求的消息格式
+                    "stream": False  # 关闭流式响应
                 }
             )
-            response.raise_for_status()
+            response.raise_for_status()  # 抛出HTTP错误（如404、500）
             result = response.json()
-            return result.get("response", "模型未返回结果")
+            # 从聊天接口的响应中提取回答（格式与/generate不同）
+            return result["message"]["content"]
     except Exception as e:
-        print(f"Ollama调用失败: {str(e)}")
-        return f"模型服务异常: {str(e)}"
+        print(f"Ollama调用失败: {str(e)}")  # 打印具体错误（便于排查）
+        return f"模型服务异常: {str(e)}"  # 返回详细错误信息
 
 
 # 如需支持Xinference，可添加类似调用函数
